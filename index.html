@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RunTracker - Suivi de Course</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-running"></i>
+                <h1>RunTracker</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-view="dashboard">Tableau de bord</a></li>
+                    <li><a href="#" data-view="activities">Activités</a></li>
+                    <li><a href="#" data-view="stats">Statistiques</a></li>
+                    <li><a href="#" data-view="profile">Profil</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <img src="https://via.placeholder.com/40" alt="Photo de profil">
+                <i class="fas fa-caret-down"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="sidebar">
+                <div class="profile-card">
+                    <img src="https://via.placeholder.com/80" alt="Photo de profil">
+                    <h3>Votre Nom</h3>
+                    <p>Coureur</p>
+                    <div class="stats">
+                        <div class="stat">
+                            <span class="number" id="total-activities">0</span>
+                            <span class="label">Activités</span>
+                        </div>
+                        <div class="stat">
+                            <span class="number" id="total-distance">0</span>
+                            <span class="label">km</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="categories">
+                    <h3>Types de séances</h3>
+                    <ul>
+                        <li><a href="#" class="session-type" data-type="fractionne"><i class="fas fa-tachometer-alt"></i> Fractionné</a></li>
+                        <li><a href="#" class="session-type" data-type="endurance"><i class="fas fa-road"></i> Endurance</a></li>
+                        <li><a href="#" class="session-type" data-type="trail"><i class="fas fa-mountain"></i> Trail</a></li>
+                        <li><a href="#" class="session-type" data-type="all"><i class="fas fa-list"></i> Toutes les séances</a></li>
+                        <li><a href="#" id="add-session-btn"><i class="fas fa-plus-circle"></i> Ajouter une séance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content">
+                <!-- Vue Tableau de bord -->
+                <div id="dashboard-view" class="view active-view">
+                    <div class="recent-activities">
+                        <div class="section-header">
+                            <h2>Activités récentes</h2>
+                            <a href="#" class="view-all" data-view="activities">Voir tout</a>
+                        </div>
+                        <div id="recent-activities-list" class="activities-grid">
+                            <!-- Les activités récentes seront ajoutées ici par JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vue Activités filtrées par type -->
+                <div id="activities-view" class="view">
+                    <div class="section-header">
+                        <h2 id="activities-title">Toutes les séances</h2>
+                        <div class="filter-controls">
+                            <select id="sort-activities">
+                                <option value="date-desc">Date (récent → ancien)</option>
+                                <option value="date-asc">Date (ancien → récent)</option>
+                                <option value="distance-desc">Distance (↓)</option>
+                                <option value="distance-asc">Distance (↑)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="filtered-activities-list" class="activities-grid">
+                        <!-- Les activités filtrées seront ajoutées ici par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Vue détaillée d'une activité -->
+                <div id="activity-detail-view" class="view">
+                    <div class="section-header">
+                        <a href="#" class="back-button" id="back-to-activities"><i class="fas fa-arrow-left"></i> Retour</a>
+                        <div class="activity-actions">
+                            <button class="btn-icon" id="edit-activity"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon" id="delete-activity"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div id="activity-detail-content">
+                        <!-- Le détail de l'activité sera ajouté ici par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Formulaire d'ajout/modification d'activité -->
+                <div id="add-activity-view" class="view">
+                    <div class="section-header">
+                        <h2 id="form-title">Ajouter une séance</h2>
+                        <a href="#" class="back-button" id="cancel-add-activity"><i class="fas fa-times"></i> Annuler</a>
+                    </div>
+                    <div class="add-activity">
+                        <form id="activity-form">
+                            <input type="hidden" id="activity-id">
+                            <div class="form-group">
+                                <label for="activity-title">Titre de la séance</label>
+                                <input type="text" id="activity-title" required placeholder="Ex: Fractionné au parc">
+                            </div>
+                            <div class="form-group">
+                                <label for="activity-date">Date</label>
+                                <input type="date" id="activity-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="activity-type">Type de séance</label>
+                                <select id="activity-type" required>
+                                    <option value="">Sélectionner un type</option>
+                                    <option value="fractionne">Fractionné</option>
+                                    <option value="endurance">Endurance</option>
+                                    <option value="trail">Trail</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Champs de base pour tous les types -->
+                            <div class="form-group">
+                                <label for="activity-distance">Distance totale (km)</label>
+                                <input type="number" id="activity-distance" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="activity-duration">Durée totale</label>
+                                <div class="duration-inputs">
+                                    <input type="number" id="activity-hours" placeholder="h" min="0">
+                                    <input type="number" id="activity-minutes" placeholder="min" min="0" max="59">
+                                    <input type="number" id="activity-seconds" placeholder="sec" min="0" max="59">
+                                </div>
+                            </div>
+                            
+                            <!-- Section des segments pour tous les types de séances -->
+                            <div id="segments-section" class="type-specific-fields">
+                                <h3>Détails des segments</h3>
+                                <p class="section-description">Ajoutez les différents segments de votre séance (portions, boucles, etc.)</p>
+                                <div id="segments-container">
+                                    <!-- Les segments seront ajoutés ici dynamiquement -->
+                                </div>
+                                <button type="button" id="add-segment" class="btn-secondary">
+                                    <i class="fas fa-plus"></i> Ajouter un segment
+                                </button>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="activity-notes">Notes</label>
+                                <textarea id="activity-notes" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn-primary">Enregistrer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 RunTracker. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <!-- Template pour un segment (caché, sera cloné par JavaScript) -->
+    <template id="segment-template">
+        <div class="segment-item">
+            <div class="segment-header">
+                <input type="text" class="segment-name" placeholder="Nom du segment (optionnel)">
+                <button type="button" class="btn-icon remove-segment"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Distance</label>
+                    <div class="input-with-unit">
+                        <input type="number" class="segment-distance" step="0.01" min="0" required>
+                        <select class="segment-distance-unit">
+                            <option value="m">m</option>
+                            <option value="km">km</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Durée</label>
+                    <div class="duration-inputs small">
+                        <input type="number" class="segment-minutes" placeholder="min" min="0">
+                        <input type="number" class="segment-seconds" placeholder="sec" min="0" max="59">
+                    </div>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Récupération</label>
+                    <div class="recovery-inputs">
+                        <select class="recovery-type">
+                            <option value="none">Aucune</option>
+                            <option value="distance">Distance</option>
+                            <option value="time">Temps</option>
+                        </select>
+                        <div class="recovery-distance-inputs" style="display: none;">
+                            <input type="number" class="recovery-distance" step="0.01" min="0">
+                            <select class="recovery-distance-unit">
+                                <option value="m">m</option>
+                                <option value="km">km</option>
+                            </select>
+                        </div>
+                        <div class="recovery-time-inputs" style="display: none;">
+                            <input type="number" class="recovery-minutes" placeholder="min" min="0">
+                            <input type="number" class="recovery-seconds" placeholder="sec" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <input type="text" class="segment-notes" placeholder="Notes sur ce segment">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html>
